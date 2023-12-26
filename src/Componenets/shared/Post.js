@@ -5,22 +5,29 @@ import { AiFillLike, AiOutlineComment, AiOutlineEdit, AiOutlineLike } from 'reac
 import { MdOutlineDelete } from 'react-icons/md';
 import { AuthContext } from '../AuthContext/AuthProvider';
 import Comment from './Comment';
+import { useDispatch } from 'react-redux';
+import { userActions } from '../redux/userSlice';
 
 const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
-    const { user } = useContext(AuthContext)
+    const authCtx = useContext(AuthContext)
+    const user = authCtx.isLoggedIn
+    const { userData } = authCtx
+    const parsedUser = JSON.parse(userData)
     const [commentRealod, setCommentRealod] = useState(false);
     const [comments, setComments] = useState([]);
     const { _id, postData, postedTime, userName } = post;
     const timePosted = new Date(postedTime).toLocaleString("en-GB")
+    const dispatch = useDispatch()
     const handleDelete = (id) => {
         if (window.confirm()) {
-            fetch(`https://atg-globe-server.vercel.app/delete-post/${_id}`, {
+            fetch(`http://localhost:5000/delete-post/${_id}`, {
                 method: 'DELETE'
             })
                 .then(res => res.json())
                 .then(data => {
-                    setReload(!reload)
-                    toast.success("Post deleted successfully")
+                    toast.success("Post deleted successfully");
+                    dispatch(userActions.setRefresh())
+
                 })
                 .catch(err => console.log(err.message))
         }
@@ -37,57 +44,47 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
         if (!e.target.comment.value) {
             return toast.error("Please write something")
         }
-        const email = user?.email;
-        const name = user?.displayName
-        const postId = post?._id;
+        const commentorInfo = { username: parsedUser?.username, email: parsedUser?.email }
         const comment = e.target.comment.value;
         const commentTime = new Date().getTime()
-        const commentData = { email, postId, comment, commentTime, name }
-        console.log(commentData)
-        fetch('https://atg-globe-server.vercel.app/comment', {
-            method: 'POST',
+        const commentData = { commentorInfo, comment, commentTime }
+        fetch('http://localhost:5000/comment', {
+            method: 'PUT',
             headers: {
                 'content-type': 'application/json'
             },
-            body: JSON.stringify(commentData)
+            body: JSON.stringify({ postId: post?._id, commentData })
         })
             .then(res => res.json())
             .then(data => {
                 e.target.reset()
-                setCommentRealod(!commentRealod)
+                dispatch(userActions.setRefresh())
                 toast.success("Comment shared successfully")
             })
             .catch(err => console.log(err.message))
 
     }
-    useEffect(() => {
-        fetch(`https://atg-globe-server.vercel.app/comments?id=${_id}`)
-            .then(res => res.json())
-            .then(data => {
-                return setComments(data)
-            })
-            .catch(err => console.log(err.message))
-    }, [commentRealod])
+
 
     const hanldeLike = () => {
-        const userEmail = user?.email;
-        const likedMail = { userEmail }
+
+        const username = parsedUser?.username
 
 
-        fetch(`https://atg-globe-server.vercel.app/like?id=${_id}`, {
+        fetch(`http://localhost:5000/like`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
             },
-            body: JSON.stringify(likedMail)
+            body: JSON.stringify({ id: _id, username })
         })
             .then(res => res.json())
             .then(data => {
                 if (data?.exist) {
-                    setReload(!reload)
+                    dispatch(userActions.setRefresh())
 
                 } else {
-                    setReload(!reload)
+                    dispatch(userActions.setRefresh())
 
 
                 }
@@ -115,7 +112,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
 
                 <div className="d-flex text-muted">
                     <div>
-                        Posted By: {userName}
+                        Posted By: {post?.userInfo?.username}
                     </div>
                     <div className="ms-3">
                         Posted On: {timePosted}
@@ -125,25 +122,29 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
                 <div className="d-flex fs-4 gap-3 mt-2">
                     <div>
                         {user && <p className='mb-0 fw-light fs-6'>
-                            {(post?.like.length)} liked this
+                            {(post?.likes.length)} liked this
                         </p>}
-                        {!post?.like.includes(user?.email) ? <>
+                        {/* {!post?.like.includes(user?.email) ? */}
+                        <>
                             <AiOutlineLike style={{ cursor: 'pointer' }} className='text-success' onClick={hanldeLike}></AiOutlineLike>
-                        </> : ''}
-                        {post?.like.includes(user?.email) ? <AiFillLike style={{ cursor: 'pointer' }} className='text-success'></AiFillLike> : ''}
+                        </>
+                        {/* : ''} */}
+                        {/* {post?.like.includes(user?.email) ?  */}
+                        <AiFillLike style={{ cursor: 'pointer' }} className='text-success'></AiFillLike>
+                        {/* : ''} */}
 
                     </div>
 
                 </div>
                 <p className="fs-4">
                     <span className="text-success fw-bold">
-                        All comments ({comments?.length})
+                        All comments ({post?.comments?.length})
                     </span>
                 </p>
                 {comments && <>
                     <div className="ms-4 mt-3 fw-light">
 
-                        {comments?.map(sinleComment => <Comment key={sinleComment?._id} sinleComment={sinleComment}></Comment>)}
+                        {post?.comments?.map(sinleComment => <Comment key={sinleComment?._id} sinleComment={sinleComment}></Comment>)}
                     </div>
                 </>}
                 <><div className='mt-3'>

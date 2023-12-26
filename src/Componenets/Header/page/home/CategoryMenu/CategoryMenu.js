@@ -8,29 +8,38 @@ import { AuthContext } from '../../../../AuthContext/AuthProvider';
 import { toast } from 'react-hot-toast';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { userActions } from '../../../../redux/userSlice';
 
 const CategoryMenu = () => {
-    const { user, allPosts, setAllPosts } = useContext(AuthContext)
+    const authCtx = useContext(AuthContext)
+    const user = authCtx.isLoggedIn
+    const { userData } = authCtx
+    const parsedUser = JSON.parse(userData)
+    const { allpost, refresh } = useSelector(state => state.user)
     const [posts, setPosts] = useState([]);
-    const [reload, setReload] = useState(false);
     const [show, setShow] = useState(false);
     const [editPost, setEditPost] = useState(null);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const dispatch = useDispatch()
     useEffect(() => {
-        fetch('https://atg-globe-server.vercel.app/posts')
+        fetch('http://localhost:5000/posts')
             .then(res => res.json())
             .then(data => {
                 setPosts(data);
-                setAllPosts(data?.length)
+                dispatch(userActions.setallPost(data))
             })
             .catch(err => console.log(err.message))
-    }, [user?.email, reload])
+    }, [refresh])
     const handlePost = (e) => {
         e.preventDefault()
         if (!user) {
             return toast.error("Please login first to post something")
+        }
+        if (!parsedUser?.username) {
+            return toast.error("Login again please")
         }
         if (!e.target.postText.value) {
             return toast.error("Please write something")
@@ -39,11 +48,12 @@ const CategoryMenu = () => {
 
         const postData = e.target.postText.value;
         const postedTime = new Date().getTime();
-        const userName = user?.displayName;
-        const userMail = user?.email;
-        const like = [];
-        const allDataInfo = { postData, postedTime, userName, userMail, like };
-        fetch('https://atg-globe-server.vercel.app/posts', {
+        const usermail = parsedUser?.email;
+        const userInfo = { username: parsedUser?.username, usermail: parsedUser?.email }
+        const likes = [];
+        const comments = []
+        const allDataInfo = { postData, postedTime, userInfo, likes, comments };
+        fetch('http://localhost:5000/posts', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -52,9 +62,11 @@ const CategoryMenu = () => {
         })
             .then(res => res.json())
             .then(data => {
-                setReload(!reload);;
+                dispatch(userActions.setRefresh())
                 toast.success('Your post has been shared successfully')
                 e.target.reset()
+
+                dispatch(userActions.setRefresh())
             })
             .catch(err => console.log(err.message))
 
@@ -63,7 +75,7 @@ const CategoryMenu = () => {
         e.preventDefault()
         handleClose();
         const editedPost = e.target.editpostText.value;
-        fetch(`https://atg-globe-server.vercel.app/edit-post/${editPost?._id}`, {
+        fetch(`http://localhost:5000/edit-post/${editPost?._id}`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
@@ -72,7 +84,7 @@ const CategoryMenu = () => {
         })
             .then(res => res.json())
             .then(data => {
-                setReload(!reload)
+                dispatch(userActions.setRefresh())
                 toast.success("Post updated");
 
             })
@@ -85,9 +97,9 @@ const CategoryMenu = () => {
                 <div className="row">
                     <div className="col-md-7">
                         <h2 className="fw-bolder mb-4">
-                            All Posts ({allPosts})
+                            All Posts ({allpost?.length})
                         </h2>
-                        {posts?.map(singlePost => <Post setReload={setReload} reload={reload} setEditPost={setEditPost} handleShow={handleShow} key={singlePost?._id} post={singlePost}></Post>)}
+                        {posts?.map(singlePost => <Post setEditPost={setEditPost} handleShow={handleShow} key={singlePost?._id} post={singlePost}></Post>)}
                         <a href="#post">
                             <div className="post-btn d-block d-sm-block d-md-none">
                                 <AiFillEdit></AiFillEdit>

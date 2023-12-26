@@ -1,21 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaFacebook, FaHandshake } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext/AuthProvider';
 
 const Header = () => {
-    const {user,logOut} = useContext(AuthContext);
+    const authCtx = useContext(AuthContext);
+    const user = authCtx.isLoggedIn
+    const handleLogout = authCtx.logout
+    const navigate = useNavigate()
 
-    const handleLogout = () => {
-        logOut()
-        .then(res => {
-                toast.error(`You are logged Out`)
-        })
-        .catch(err => console.log(err.message))
-    }
+    // useEffect(() => {
+    //     if (!authCtx.isLoggedIn) {
+
+    //     }
+    // }, [authCtx.isLoggedIn])
     return (
         <header className='container py-4'>
             <div className="d-md-flex d-none d-sm-none justify-content-between">
@@ -36,16 +37,16 @@ const Header = () => {
                         {user && <span className="fw-bolder"> <FaHandshake className="fs-3 me-2"></FaHandshake> Hi {user?.displayName} </span>}
                     </span>
                     {!user && <><Link to="/login" className='text-decoration-none text-success fw-bolder px-3'>Login</Link>
-                    <Link to="/register" className='text-decoration-none text-success fw-bolder px-3'>Register</Link></>}
-                    {user && <span onClick={handleLogout} style={{cursor: 'pointer'}} className='text-decoration-none text-success fw-bolder px-3'>Logout</span>}
+                        <Link to="/register" className='text-decoration-none text-success fw-bolder px-3'>Register</Link></>}
+                    {user && <span onClick={handleLogout} style={{ cursor: 'pointer' }} className='text-decoration-none text-success fw-bolder px-3'>Logout</span>}
                 </div>
             </div>
 
-          
 
-              
 
-            
+
+
+
 
         </header>
     );

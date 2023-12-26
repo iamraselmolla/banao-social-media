@@ -4,10 +4,66 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext/AuthProvider';
 
 const Login = () => {
-    const { login } = useContext(AuthContext);
-    const [showLoading, setShowLoading] = useState(false)
-    const navigate = useNavigate();
+    const authCtx = useContext(AuthContext)
+    const [userInfo, setUserInfo] = useState({
+        username: '',
+        password: ''
+    })
+    const navigate = useNavigate()
+    const handleUsernameChange = (newUsername) => {
+        setUserInfo({
+            ...userInfo,
+            username: newUsername
+        });
+    };
+    const handlePasswordChange = (newPassword) => {
+        setUserInfo({
+            ...userInfo,
+            password: newPassword
+        });
+    };
 
+    const handleLogin = async (e) => {
+        e.preventDefault()
+        if (!userInfo.password) {
+            return toast.error("Please give  password")
+        }
+        if (!userInfo.username) {
+            return toast.error("Please give  valid username")
+        }
+
+
+        try {
+            const response = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userInfo),
+            });
+            const data = await response.json()
+
+            if (response?.status === 404) {
+                return toast.error(data?.message)
+            }
+            if (response.status === 401) {
+                return toast.error(data?.message)
+            }
+            if (response.status === 200) {
+                authCtx.login(data?.localid, data?.token, data?.data)
+                navigate("/")
+                return toast.success(data?.message)
+
+
+            }
+
+
+
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
 
     return (
@@ -22,18 +78,25 @@ const Login = () => {
                             <div className="register-user-form">
                                 <form>
                                     <div className="row">
-                                        <input name='username' placeholder='Username' type="text" className="form-control rounded-0 fw-bold py-3  border-bottom-none text-muted" id="emailinput" />
+                                        <input name='username' placeholder='Username' type="text" className="form-control rounded-0 fw-bold py-3  border-bottom-none text-muted" id="emailinput"
+                                            value={userInfo.username}
+                                            onChange={(e) => handleUsernameChange(e.target.value)}
+                                        />
                                     </div>
                                     <div className="row">
-                                        <input name='password' placeholder='Password' type="password" className="form-control rounded-0 fw-bold py-3  text-muted" id="passinputlogin" />
-                                    </div>
-                                    <div className="row">
-                                        {!showLoading && <button type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Log in</button>}
+                                        <input name='password' placeholder='Password' type="password" className="form-control rounded-0 fw-bold py-3  text-muted" id="passinputlogin"
 
-                                        {showLoading && <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
+                                            value={userInfo.password}
+                                            onChange={(e) => handlePasswordChange(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="row">
+                                        <button onClick={handleLogin} type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Log in</button>
+
+                                        {/* <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
                                             <span class="spinner-border me-2 spinner-border-sm" role="status" aria-hidden="true"></span>
                                             Please Wait...
-                                        </button>}
+                                        </button> */}
                                     </div>
                                 </form>
 

@@ -10,8 +10,9 @@ import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { userActions } from '../../../../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
 
-const CategoryMenu = () => {
+const PostSection = () => {
     const authCtx = useContext(AuthContext)
     const user = authCtx.isLoggedIn
     const { userData } = authCtx
@@ -20,6 +21,7 @@ const CategoryMenu = () => {
     const [posts, setPosts] = useState([]);
     const [show, setShow] = useState(false);
     const [editPost, setEditPost] = useState(null);
+    const navigate = useNavigate()
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -36,6 +38,7 @@ const CategoryMenu = () => {
     const handlePost = (e) => {
         e.preventDefault()
         if (!user) {
+            navigate("/login")
             return toast.error("Please login first to post something")
         }
         if (!parsedUser?.username) {
@@ -95,7 +98,7 @@ const CategoryMenu = () => {
 
             <div className="container position-relative">
                 <div className="row">
-                    <div className="col-md-7">
+                    <div className="col-md-8">
                         <h2 className="fw-bolder mb-4">
                             All Posts ({allpost?.length})
                         </h2>
@@ -106,7 +109,7 @@ const CategoryMenu = () => {
                             </div>
                         </a>
                     </div>
-                    <div id='post' className="col-md-4 offset-md-1 position-relative">
+                    <div id='post' className="col-md-4 position-relative">
                         <div className="position-sticky mt-3 top-0">
                             <h2 className="fw-bolder mb-4">
                                 Write a Post <AiFillEdit></AiFillEdit>
@@ -153,4 +156,4 @@ const CategoryMenu = () => {
     );
 };
 
-export default CategoryMenu;
+export default PostSection;

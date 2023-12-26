@@ -7,6 +7,7 @@ import { AuthContext } from '../AuthContext/AuthProvider';
 import Comment from './Comment';
 import { useDispatch } from 'react-redux';
 import { userActions } from '../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
     const authCtx = useContext(AuthContext)
@@ -15,6 +16,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
     const parsedUser = JSON.parse(userData)
     const [commentRealod, setCommentRealod] = useState(false);
     const [comments, setComments] = useState([]);
+    const navigate = useNavigate()
     const { _id, postData, postedTime, userName } = post;
     const timePosted = new Date(postedTime).toLocaleString("en-GB")
     const dispatch = useDispatch()
@@ -39,6 +41,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
     const handleComment = (e) => {
         e.preventDefault()
         if (!user) {
+            navigate("/login")
             return toast.error("please login first to comment")
         }
         if (!e.target.comment.value) {
@@ -67,6 +70,10 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
 
 
     const hanldeLike = () => {
+        if (!authCtx.isLoggedIn) {
+            navigate("/login")
+            return toast.error("Please login First")
+        }
 
         const username = parsedUser?.username
 
@@ -97,13 +104,15 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
             <div cl className="fw-bolder position-relative">
                 <span className="position-absolute" style={{ right: '-10px', top: '-20px' }}>
 
-                    {user && user?.email === post?.userMail && <div className="d-flex">
-                        <div><AiOutlineEdit onClick={handleUpdatePost} style={{ cursor: 'pointer' }} className="fs-4 text-success userhandleicon"></AiOutlineEdit></div>
-                        <div>
-                            <MdOutlineDelete style={{ cursor: 'pointer' }} onClick={() => handleDelete(_id)} className="fs-4 ms-2 text-danger userhandleicon"></MdOutlineDelete>
-                        </div>
+                    {user && parsedUser?.email === post?.userInfo?.usermail &&
+                        <div className="d-flex">
+                            <div><AiOutlineEdit onClick={handleUpdatePost} style={{ cursor: 'pointer' }} className="fs-4 text-success userhandleicon"></AiOutlineEdit></div>
+                            <div>
+                                <MdOutlineDelete style={{ cursor: 'pointer' }} onClick={() => handleDelete(_id)} className="fs-4 ms-2 text-danger userhandleicon"></MdOutlineDelete>
+                            </div>
 
-                    </div>}
+                        </div>
+                    }
 
                 </span>
                 <p className="fw-bolder">
@@ -124,19 +133,21 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
                         {user && <p className='mb-0 fw-light fs-6'>
                             {(post?.likes.length)} liked this
                         </p>}
-                        {/* {!post?.like.includes(user?.email) ? */}
-                        <>
-                            <AiOutlineLike style={{ cursor: 'pointer' }} className='text-success' onClick={hanldeLike}></AiOutlineLike>
-                        </>
-                        {/* : ''} */}
-                        {/* {post?.like.includes(user?.email) ?  */}
-                        <AiFillLike style={{ cursor: 'pointer' }} className='text-success'></AiFillLike>
-                        {/* : ''} */}
+                        {!post?.likes.includes(parsedUser?.username) ?
+                            <>
+                                <AiOutlineLike style={{ cursor: 'pointer' }} className='text-success' onClick={hanldeLike}></AiOutlineLike>
+                            </>
+                            : <>
+                                <AiFillLike style={{ cursor: 'pointer' }} className='text-success'></AiFillLike>
+                            </>}
+
+
+
 
                     </div>
 
                 </div>
-                <p className="fs-4">
+                <p className="fs-4 mt-4 ">
                     <span className="text-success fw-bold">
                         All comments ({post?.comments?.length})
                     </span>

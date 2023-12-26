@@ -9,14 +9,11 @@ import { AuthContext } from '../AuthContext/AuthProvider';
 const Header = () => {
     const authCtx = useContext(AuthContext);
     const user = authCtx.isLoggedIn
+    const parsedData = JSON.parse(authCtx.userData)
     const handleLogout = authCtx.logout
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     if (!authCtx.isLoggedIn) {
 
-    //     }
-    // }, [authCtx.isLoggedIn])
     return (
         <header className='container py-4'>
             <div className="d-md-flex d-none d-sm-none justify-content-between">
@@ -34,7 +31,7 @@ const Header = () => {
                 </form>
                 <div>
                     <span className="fw-bolde">
-                        {user && <span className="fw-bolder"> <FaHandshake className="fs-3 me-2"></FaHandshake> Hi {user?.displayName} </span>}
+                        {user && <span className="fw-bolder"> <FaHandshake className="fs-3 me-2"></FaHandshake> Hi {parsedData?.username} </span>}
                     </span>
                     {!user && <><Link to="/login" className='text-decoration-none text-success fw-bolder px-3'>Login</Link>
                         <Link to="/register" className='text-decoration-none text-success fw-bolder px-3'>Register</Link></>}

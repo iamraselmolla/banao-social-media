@@ -9,7 +9,7 @@ export const OtpContext = createContext()
 const ForgetPass = () => {
     const [page, setPage] = useState('forget')
     const [email, setEmail] = useState()
-    const [otp, setOtp] = useState()
+    const [generatedotp, setGeneratedOtp] = useState()
 
     function HandleOtpComponenet() {
         if (page === 'forget') return <ForgetEmail />
@@ -17,7 +17,7 @@ const ForgetPass = () => {
         if (page === 'newpass') return <NewPassword />
     }
 
-    const value = { page, setPage, email, setEmail, otp, setOtp }
+    const value = { page, setPage, email, setEmail, generatedotp, setGeneratedOtp }
 
 
 
@@ -26,10 +26,10 @@ const ForgetPass = () => {
         <OtpContext.Provider value={value}>
             <div className="container py-5">
                 <div className="row">
-                    <div className="col-md-4 offset-md-4">
+                    <div className="col-md-6 offset-md-3">
                         <div className="border px-3 py-4 border-success border-2">
-                            <h2 className="fw-bolder">
-                                Reset Password?
+                            <h2 className="fw-bolder text-center ">
+                                Reset Password
                             </h2>
                             <HandleOtpComponenet />
                         </div>

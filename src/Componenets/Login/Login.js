@@ -5,6 +5,7 @@ import { AuthContext } from '../AuthContext/AuthProvider';
 
 const Login = () => {
     const authCtx = useContext(AuthContext)
+    const [loading, setLoading] = useState(false)
     const [userInfo, setUserInfo] = useState({
         username: '',
         password: ''
@@ -25,6 +26,7 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault()
+        setLoading(true)
         if (!userInfo.password) {
             return toast.error("Please give  password")
         }
@@ -44,12 +46,17 @@ const Login = () => {
             const data = await response.json()
 
             if (response?.status === 404) {
+                setLoading(false)
                 return toast.error(data?.message)
             }
             if (response.status === 401) {
+                setLoading(false)
                 return toast.error(data?.message)
             }
             if (response.status === 200) {
+                setLoading(false)
+                console.log(data?.data)
+
                 authCtx.login(data?.localid, data?.token, data?.data)
                 navigate("/")
                 return toast.success(data?.message)
@@ -61,6 +68,7 @@ const Login = () => {
 
 
         } catch (error) {
+            setLoading(false)
             console.error('Error:', error);
         }
     }
@@ -91,12 +99,12 @@ const Login = () => {
                                         />
                                     </div>
                                     <div className="row">
-                                        <button onClick={handleLogin} type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Log in</button>
+                                        {!loading && <button onClick={handleLogin} type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Log in</button>}
 
-                                        {/* <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
+                                        {loading && <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
                                             <span class="spinner-border me-2 spinner-border-sm" role="status" aria-hidden="true"></span>
                                             Please Wait...
-                                        </button> */}
+                                        </button>}
                                     </div>
                                 </form>
 

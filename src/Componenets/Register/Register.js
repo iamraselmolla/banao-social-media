@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(false)
     const [userInfo, setUserInfo] = useState({
         username: '',
         email: '',
@@ -42,6 +43,7 @@ const Register = () => {
 
         try {
             setError(null);
+            setLoading(true)
             const response = await fetch('https://banao-social-media-server-mu.vercel.app/register', {
                 method: 'POST',
                 headers: {
@@ -52,13 +54,16 @@ const Register = () => {
             const data = await response.json()
             if (response.status === 409) {
                 setError(data.message)
+                setLoading(false)
             }
             if (response.status === 200) {
+                setLoading(false)
                 toast.success("Registration successfull")
                 navigate("/login")
             }
         } catch (error) {
             console.error('Error:', error);
+            setLoading(false)
         }
     }
     const handleChange = (e) => {
@@ -100,11 +105,11 @@ const Register = () => {
                                     </div>
                                     <p className='text-danger fw-bolder'>{error && error}</p>
                                     <div className="row">
-                                        <button onClick={handleCreateUser} type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Create Account</button>
-                                        {/* <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
+                                        {!loading && <button onClick={handleCreateUser} type="submit" className="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success">Create Account</button>}
+                                        {loading && <button class="btn mt-3 py-2 w-100 rounded-5 fw-bold btn-success" type="button" disabled>
                                             <span class="spinner-border me-2 spinner-border-sm" role="status" aria-hidden="true"></span>
                                             Please Wait...
-                                        </button> */}
+                                        </button>}
                                     </div>
                                 </form>
                                 <button className="border fw-bold mt-4 w-100 px-3 py-2 bg-transparent border-1 rounded-0">

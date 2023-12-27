@@ -35,6 +35,7 @@ const AuthProvider = ({ children }) => {
         setLoggedIn(true);
         localStorage.setItem('token', token);
         localStorage.setItem('localid', localid);
+
         localStorage.setItem('userData', JSON.stringify(userData));
     }
     const logoutHandler = () => {

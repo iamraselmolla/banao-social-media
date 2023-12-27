@@ -78,7 +78,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
         const username = parsedUser?.username
 
 
-        fetch(`https://banao-social-media-server-mu.vercel.app/posts/like`, {
+        fetch(`https://banao-social-media-server-mu.vercel.app/like`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'

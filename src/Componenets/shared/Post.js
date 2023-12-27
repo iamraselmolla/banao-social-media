@@ -22,7 +22,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
     const dispatch = useDispatch()
     const handleDelete = (id) => {
         if (window.confirm()) {
-            fetch(`http://localhost:5000/delete-post/${_id}`, {
+            fetch(`https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/delete-post/${_id}`, {
                 method: 'DELETE'
             })
                 .then(res => res.json())
@@ -51,7 +51,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
         const comment = e.target.comment.value;
         const commentTime = new Date().getTime()
         const commentData = { commentorInfo, comment, commentTime }
-        fetch('http://localhost:5000/comment', {
+        fetch('https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/comment', {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
@@ -78,7 +78,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
         const username = parsedUser?.username
 
 
-        fetch(`http://localhost:5000/like`, {
+        fetch(`https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/like`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
@@ -140,10 +140,6 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
                             : <>
                                 <AiFillLike style={{ cursor: 'pointer' }} className='text-success'></AiFillLike>
                             </>}
-
-
-
-
                     </div>
 
                 </div>

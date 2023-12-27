@@ -34,7 +34,7 @@ const Login = () => {
 
 
         try {
-            const response = await fetch('https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/login', {
+            const response = await fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -42,7 +42,7 @@ const Register = () => {
 
         try {
             setError(null);
-            const response = await fetch('https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/register', {
+            const response = await fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

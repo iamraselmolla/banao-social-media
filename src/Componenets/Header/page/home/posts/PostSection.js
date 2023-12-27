@@ -27,7 +27,10 @@ const PostSection = () => {
     const handleShow = () => setShow(true);
     const dispatch = useDispatch()
     useEffect(() => {
-        fetch('https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/posts')
+        fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/posts', {
+            method: 'GET',
+            mode: 'cors',
+        })
             .then(res => res.json())
             .then(data => {
                 setPosts(data);
@@ -56,7 +59,7 @@ const PostSection = () => {
         const likes = [];
         const comments = []
         const allDataInfo = { postData, postedTime, userInfo, likes, comments };
-        fetch('https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/posts', {
+        fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/posts', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -78,7 +81,7 @@ const PostSection = () => {
         e.preventDefault()
         handleClose();
         const editedPost = e.target.editpostText.value;
-        fetch(`https://banao-social-media-wweb-server-nsep93f0n-iamraselmolla.vercel.app/edit-post/${editPost?._id}`, {
+        fetch(`https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/edit-post/${editPost?._id}`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'

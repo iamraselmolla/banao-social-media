@@ -12,6 +12,9 @@ const Otp = () => {
             toast.error("Something wrong")
             return
         }
+        if (parseInt(otp) !== generatedotp) {
+            toast.error('OTP didn\'t match')
+        }
         if (parseInt(otp) === generatedotp) {
             setPage('newpass')
             return
@@ -22,15 +25,18 @@ const Otp = () => {
             <p className="">
                 Please provide the otp we sent to {email}
             </p>
-            <OtpInput
-                shouldAutoFocus={true}
-                value={otp}
-                onChange={setOtp}
-                numInputs={4}
-                renderSeparator={<span>-</span>}
-                renderInput={(props) => <input className='mx-3' {...props} />}
-            />
-            <div className="d-flex justify-content-evenly  mt-3">
+            <div className="d-flex justify-content-center">
+                <OtpInput
+                    shouldAutoFocus={true}
+                    value={otp}
+                    onChange={setOtp}
+                    numInputs={4}
+                    inputStyle={{ width: '2em' }}
+                    renderSeparator={<span>-</span>}
+                    renderInput={(props) => <input className='mx-3' {...props} />}
+                />
+            </div>
+            <div className="d-flex justify-content-evenly  mt-5">
                 <button onClick={() => setOtp('')} className='btn btn-light border-1  border-dark  '>
                     Clear
                 </button>

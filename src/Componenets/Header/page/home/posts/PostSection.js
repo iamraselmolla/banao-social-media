@@ -27,17 +27,32 @@ const PostSection = () => {
     const handleShow = () => setShow(true);
     const dispatch = useDispatch()
     useEffect(() => {
-        fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/posts', {
-            method: 'GET',
-            mode: 'cors',
-        })
-            .then(res => res.json())
-            .then(data => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('https://banao-social-media-server-mu.vercel.app/posts', {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any additional headers if required
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
                 setPosts(data);
-                dispatch(userActions.setallPost(data))
-            })
-            .catch(err => console.log(err.message))
-    }, [refresh])
+                dispatch(userActions.setallPost(data));
+            } catch (error) {
+                console.error('Error fetching data:', error.message);
+            }
+        };
+
+        fetchData(); // Call the async function
+
+    }, [refresh, dispatch]);
     const handlePost = (e) => {
         e.preventDefault()
         if (!user) {
@@ -59,7 +74,7 @@ const PostSection = () => {
         const likes = [];
         const comments = []
         const allDataInfo = { postData, postedTime, userInfo, likes, comments };
-        fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/posts', {
+        fetch('https://banao-social-media-server-mu.vercel.app/posts', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -81,7 +96,7 @@ const PostSection = () => {
         e.preventDefault()
         handleClose();
         const editedPost = e.target.editpostText.value;
-        fetch(`https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/edit-post/${editPost?._id}`, {
+        fetch(`https://banao-social-media-server-mu.vercel.app/edit-post/${editPost?._id}`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'

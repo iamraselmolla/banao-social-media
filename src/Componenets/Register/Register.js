@@ -42,7 +42,7 @@ const Register = () => {
 
         try {
             setError(null);
-            const response = await fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/register', {
+            const response = await fetch('https://banao-social-media-server-mu.vercel.app/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,7 +50,6 @@ const Register = () => {
                 body: JSON.stringify(userInfo),
             });
             const data = await response.json()
-            console.log(data)
             if (response.status === 409) {
                 setError(data.message)
             }

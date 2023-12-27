@@ -10,7 +10,7 @@ const ForgetPass = () => {
         if (!mail) {
             return toast.error("Please give email")
         }
-        const response = await fetch('https://banao-social-media-wweb-server-epwz7mvnr-iamraselmolla.vercel.app/posts/forget-password', {
+        const response = await fetch('https://banao-social-media-server-mu.vercel.app/forget-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

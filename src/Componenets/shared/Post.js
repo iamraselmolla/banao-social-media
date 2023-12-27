@@ -21,7 +21,7 @@ const Post = ({ post, handleShow, setEditPost, setReload, reload }) => {
     const timePosted = new Date(postedTime).toLocaleString("en-GB")
     const dispatch = useDispatch()
     const handleDelete = (id) => {
-        if (window.confirm()) {
+        if (window.confirm('Do you want to delete this?')) {
             fetch(`https://banao-social-media-server-mu.vercel.app/delete-post/${_id}`, {
                 method: 'DELETE'
             })

@@ -39,6 +39,9 @@ const Register = () => {
             setError('Please fill up all input fields')
             return
         }
+        if (userInfo.password.length <= 5) {
+            return toast.error("please use more than 6 digit password")
+        }
 
 
         try {

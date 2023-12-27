@@ -33,6 +33,11 @@ const NewPassword = () => {
             toast.error('Passwords do not match. Please re-type them.')
             return;
         }
+        if (newPass.pass1.length <= 5) {
+            {
+                return toast.error("Please use minimum 6 digits passwords")
+            }
+        }
         const result = await fetch('http://localhost:5000/reset-password',
             {
                 method: 'PUT',

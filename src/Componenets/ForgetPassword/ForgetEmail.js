@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { OtpContext } from './ForgetPass';
+import { useNavigate } from 'react-router-dom';
 
 
 const ForgetEmail = () => {
@@ -28,6 +29,11 @@ const ForgetEmail = () => {
             body: JSON.stringify({ mailInput, otpNumber }),
         })
             .then((res) => {
+                if(res.status === 400){
+                    toast.error("User not found")
+                    throw new Error('User not found. Please register')
+                    
+                }
                 if (!res.ok) {
                     setLoading(false)
                     throw new Error(`HTTP error! Status: ${res.status}`);
@@ -37,7 +43,7 @@ const ForgetEmail = () => {
             })
             .then(data => {
                 if (data?.statusCode === 400) {
-                    toast.error(data?.message);
+                    
                     return;
                 }
 
@@ -48,7 +54,6 @@ const ForgetEmail = () => {
             .catch(err => {
                 setLoading(false)
                 console.error(err);
-                toast.error("An error occurred while resetting the password.");
             });
     };
     return (
